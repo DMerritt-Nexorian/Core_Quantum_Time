@@ -1,0 +1,16 @@
+[package]
+name = "core_quantum_time_engine"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = []
+alloc = []
+
+[dependencies]
+libm = "0.2.16"
+num-complex = { version = "0.4.6", default-features = false }
+num-traits = { version = "0.2.19", default-features = false, features = ["libm"] }
+
+[dev-dependencies]
+proptest = "1.11.0"
