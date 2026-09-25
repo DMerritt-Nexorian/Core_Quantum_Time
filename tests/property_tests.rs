@@ -1,5 +1,5 @@
-use core_quantum_time_engine::quantum_switch::Hamiltonian;
-use core_quantum_time_engine::weak_measurement::Matrix2x2;
+use aharonov::quantum_switch::Hamiltonian;
+use aharonov::weak_measurement::Matrix2x2;
 use num_complex::Complex64;
 use proptest::prelude::*;
 

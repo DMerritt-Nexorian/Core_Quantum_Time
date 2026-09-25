@@ -1,35 +1,52 @@
-# MACRO LIMITATION BOUNDS: SPECIAL RELATIVITY & SECOND LAW OF THERMODYNAMICS
+# MACRO LIMITATION BOUNDS: THERMODYNAMICS, RELATIVITY & CITATIONS
 
-## 1. Thermodynamic Bottleneck ($\Delta S_{\text{macro}} \ge 0$)
-While individual quantum particles can undergo deterministic state rewinding (which is a unitary, reversible process), the Second Law of Thermodynamics must be strictly obeyed at the macroscopic scale.
+## 1. Foundational Literature & Scientific Citations
 
-### Macro-Scale Entropy Limit
-For macroscopic multi-particle systems, the number of degrees of freedom is on the order of $N \sim 10^{23}$. Any attempt to reverse the states of all particles requires:
-1. Reversing the thermal interactions with the external environment.
-2. Perfect isolation of a macroscopic amount of matter.
+The mathematical architecture and physical constraints of **Aharonov** are strictly anchored in seminal quantum mechanics literature:
 
-According to statistical mechanics, the probability of spontaneous entropy reduction in a macroscopic system decreases exponentially with the particle count $N$:
+1. **Foundational Weak Measurement & Weak Values Paper**:
+   > **Aharonov, Y., Albert, D. Z., & Vaidman, L. (1988).**
+   > *"How the result of a measurement of a component of the spin of a spin-1/2 particle can turn out to be 100."*
+   > **Physical Review Letters**, 60(14), 1351–1354.
+   > *DOI: [10.1103/PhysRevLett.60.1351](https://doi.org/10.1103/PhysRevLett.60.1351)*
+   > **Significance:** Establishes the formal mathematical foundation for weak values, post-selection amplification, and non-destructive weak measurement interactions that bypass strong wave-function collapse limits.
 
-$$P(\Delta S < 0) \propto e^{-\Delta S / k_B}$$
-
-For $N > 10$, the system enters the classical-statistical domain, where macroscopic entropy $\Delta S_{\text{macro}}$ must satisfy:
-
-$$\Delta S_{\text{macro}} \ge 0$$
-
-The `core_quantum_time_engine` enforces a hard limit of $N \le 10$ quantum particles to maintain physical modeling safety and prevent macroscopic entropy leakage simulations that violate thermodynamic laws.
+2. **Quantum Switch & Indefinite Causal Structures Paper**:
+   > **Chiribella, G., D’Ariano, G. M., Perinotti, P., & Valiron, B. (2013).**
+   > *"Quantum computations with superpositions of causal orders."*
+   > **Physical Review A**, 88(2), 022318.
+   > *DOI: [10.1103/PhysRevA.88.022318](https://doi.org/10.1103/PhysRevA.88.022318)*
+   > **Significance:** Validates the implementation of indefinite causal order superpositions ($U_{\text{switch}}$), proving how controlling operational sequences enables non-destructive state restoration protocols.
 
 ---
 
-## 2. Relativistic Signal Bottleneck ($v_{\text{signal}} \le c$)
-Quantum entanglement and superposition do not allow faster-than-light (FTL) classical information transmission.
+## 2. Thermodynamic Bottleneck ($\Delta S_{\text{macro}} \ge 0$)
 
-### Special Relativity Guard
-If a state restoration loop or negative dwell state could be used to transmit a bit value from a receiver to a sender instantaneously, it would violate special relativity and create causal paradoxes.
+While microscopic quantum particles described by unitary operators $U(t) = \exp(-i \hat{H} t)$ undergo reversible time evolution, macroscopic physical systems ($N \gg 1$) are bound by the Second Law of Thermodynamics.
 
-The signal velocity $v_{\text{signal}}$ must always satisfy:
+### 2.1 Microscopic Unitary Reversibility vs. Macroscopic Entropy
+For isolated $N$-particle systems, the state space scales exponentially as $\mathcal{H} \approx \mathbb{C}^{2^N}$. Reversing a macroscopic state requiring the inversion of all thermal environmental interactions yields a probability decreasing exponentially with particle count $N$:
 
-$$v_{\text{signal}} \le c$$
+$$P(\Delta S < 0) \propto \exp\left(-\frac{\Delta S}{k_B}\right)$$
 
-where $c = 299,792,458 \text{ m/s}$ is the speed of light in vacuum.
+For macroscopic multi-body systems ($N > 10$), the thermal decoherence timescale $\tau_{\text{dec}}$ approaches zero ($\tau_{\text{dec}} \to 0$), forcing classical statistical behavior where macroscopic entropy change obeys:
 
-The engine's `MacroGuard` validates all simulation parameters and automatically blocks any workflow where information transmission is detected to exceed $c$ or violate macroscopic thermodynamic constraints.
+$$\Delta S_{\text{macro}} \ge 0$$
+
+### 2.2 Hard-Coded Microscopic Particle Limit
+The `Aharonov` framework enforces a hard microscopic boundary limit ($N \le 10$) via `MacroGuard`. Any simulation workflow attempting state restoration on particle thresholds exceeding $N = 10$ is immediately aborted with a `MacroScaleBoundaryViolation::MacroscopicParticleCountViolation` or `EntropyDecreaseDetected` error.
+
+---
+
+## 3. Special Relativity & Causal Signaling Bottleneck ($v_{\text{signal}} \le c$)
+
+Quantum entanglement, weak measurement amplification, and causal order superpositions cannot be exploited to transmit classical information faster than light ($v > c$).
+
+### 3.1 Relativistic Guard Formulation
+Allowing negative dwell time observables ($\tau_{\text{dwell}} < 0$) or quantum switch pathways to transmit superluminal classical signals would generate closed timelike curves (CTCs) and causal grandfather paradoxes.
+
+The signal velocity $v_{\text{signal}}$ across all simulated quantum state transitions must satisfy:
+
+$$v_{\text{signal}} \le c = 299,792,458 \text{ m/s}$$
+
+The `MacroGuard` safety module verifies signal parameters prior to executing state transformations, blocking unphysical parameters that violate special relativity boundaries.

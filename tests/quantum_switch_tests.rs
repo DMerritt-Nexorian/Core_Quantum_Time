@@ -1,5 +1,5 @@
-use core_quantum_time_engine::quantum_switch::{Hamiltonian, JointState, build_quantum_switch};
-use core_quantum_time_engine::weak_measurement::QubitState;
+use aharonov::quantum_switch::{BasicQuantumSwitch, Hamiltonian, JointState, QuantumSwitch};
+use aharonov::weak_measurement::QubitState;
 use num_complex::Complex64;
 
 #[test]
@@ -20,8 +20,8 @@ fn test_exact_state_restoration_fidelity() {
     let psi_t = psi_0.apply_matrix(&u_forward);
 
     // State restoration (Rewind): R(H, t) * |\psi_t>
-    let r_rewind = h.restoration_operator(t);
-    let psi_rewound = psi_t.apply_matrix(&r_rewind);
+    let switch_engine = BasicQuantumSwitch::new();
+    let psi_rewound = switch_engine.rewind_causal_order(&h, &psi_t, t);
 
     // Calculate fidelity F = |<psi_0 | psi_rewound>|^2
     let overlap = psi_0.inner_product(&psi_rewound);
@@ -56,8 +56,9 @@ fn test_quantum_switch_indefinite_causal_order() {
     let h_b = Hamiltonian::new(0.0, 0.0, libm::acos(-1.0) / 4.0, 0.0);
     let u_b = h_b.evolve_operator(1.0);
 
-    // Build switch
-    let switch = build_quantum_switch(&u_a, &u_b);
+    // Build switch using trait method
+    let switch_engine = BasicQuantumSwitch::new();
+    let switch = switch_engine.superimpose_operations(&u_a, &u_b);
 
     let joint_init = JointState::separable(&control, &target);
     let joint_final = switch.apply(&joint_init);

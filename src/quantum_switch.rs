@@ -39,15 +39,12 @@ impl Hamiltonian {
         let exp_phase = from_polar(1.0, -self.d0 * t);
 
         if d_norm < 1e-15 {
-            // exp(-i * d0 * t) * I
             Matrix2x2::IDENTITY.scale(exp_phase)
         } else {
             let cos_val = libm::cos(d_norm * t);
             let sin_val = libm::sin(d_norm * t);
 
-            // M = cos(d*t)*I - i*sin(d*t)*(d_vec . sigma)/d
             let coeff = sin_val / d_norm;
-            // -i * coeff
             let m_coeff = Complex64::new(0.0, -coeff);
 
             let m00 = Complex64::new(cos_val, 0.0) + m_coeff * self.dz;
@@ -97,7 +94,6 @@ impl JointState {
         Self { data }
     }
 
-    /// Creates a separable joint state |control> \otimes |target>.
     pub fn separable(control: &QubitState, target: &QubitState) -> Self {
         Self {
             data: [
@@ -216,25 +212,65 @@ impl Matrix4x4 {
     }
 }
 
-/// Builds the Quantum Switch operator over indefinite causal orders:
-/// U_switch = |0><0| \otimes (U_B U_A) + |1><1| \otimes (U_A U_B)
+/// Strict public trait interface for indefinite causal order superpositions and state rewinding.
+pub trait QuantumSwitch {
+    /// Constructs the quantum switch operator U_switch = |0><0| (x) (U_B U_A) + |1><1| (x) (U_A U_B)
+    fn superimpose_operations(&self, u_a: &Matrix2x2, u_b: &Matrix2x2) -> Matrix4x4;
+
+    /// Applies restoration/rewinding operator R(H, t) = exp(i * H * t) to target qubit state
+    fn rewind_causal_order(
+        &self,
+        hamiltonian: &Hamiltonian,
+        target: &QubitState,
+        t: f64,
+    ) -> QubitState;
+}
+
+/// Basic unoptimized pure-Rust reference implementation of `QuantumSwitch`.
+/// Multi-threaded causal scheduler routines remain private.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct BasicQuantumSwitch;
+
+impl BasicQuantumSwitch {
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+impl QuantumSwitch for BasicQuantumSwitch {
+    fn superimpose_operations(&self, u_a: &Matrix2x2, u_b: &Matrix2x2) -> Matrix4x4 {
+        let u_b_u_a = u_b.mul(u_a);
+        let u_a_u_b = u_a.mul(u_b);
+
+        let mut data = [[Complex64::new(0.0, 0.0); 4]; 4];
+
+        // Top-left 2x2 block corresponds to control state |0>
+        data[0][0] = u_b_u_a.data[0][0];
+        data[0][1] = u_b_u_a.data[0][1];
+        data[1][0] = u_b_u_a.data[1][0];
+        data[1][1] = u_b_u_a.data[1][1];
+
+        // Bottom-right 2x2 block corresponds to control state |1>
+        data[2][2] = u_a_u_b.data[0][0];
+        data[2][3] = u_a_u_b.data[0][1];
+        data[3][2] = u_a_u_b.data[1][0];
+        data[3][3] = u_a_u_b.data[1][1];
+
+        Matrix4x4::new(data)
+    }
+
+    fn rewind_causal_order(
+        &self,
+        hamiltonian: &Hamiltonian,
+        target: &QubitState,
+        t: f64,
+    ) -> QubitState {
+        let r_op = hamiltonian.restoration_operator(t);
+        target.apply_matrix(&r_op)
+    }
+}
+
+/// Standalone function re-export for backwards compatibility.
 pub fn build_quantum_switch(u_a: &Matrix2x2, u_b: &Matrix2x2) -> Matrix4x4 {
-    let u_b_u_a = u_b.mul(u_a);
-    let u_a_u_b = u_a.mul(u_b);
-
-    let mut data = [[Complex64::new(0.0, 0.0); 4]; 4];
-
-    // Top-left 2x2 block corresponds to control state |0>
-    data[0][0] = u_b_u_a.data[0][0];
-    data[0][1] = u_b_u_a.data[0][1];
-    data[1][0] = u_b_u_a.data[1][0];
-    data[1][1] = u_b_u_a.data[1][1];
-
-    // Bottom-right 2x2 block corresponds to control state |1>
-    data[2][2] = u_a_u_b.data[0][0];
-    data[2][3] = u_a_u_b.data[0][1];
-    data[3][2] = u_a_u_b.data[1][0];
-    data[3][3] = u_a_u_b.data[1][1];
-
-    Matrix4x4::new(data)
+    BasicQuantumSwitch.superimpose_operations(u_a, u_b)
 }
