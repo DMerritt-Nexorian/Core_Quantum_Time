@@ -1,4 +1,4 @@
-# DRAWINGS AND DIAGRAMS: CORE_QUANTUM_TIME SIMULATION ENGINE
+# DRAWINGS AND DIAGRAMS: AHARONOV QUANTUM ENGINE
 
 ## 1. Weak Measurement Optical Path for Negative Dwell Simulation
 The following schematic describes the physical flow of a photon passing through an atomic medium with pre- and post-selection stages.
