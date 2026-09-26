@@ -1,4 +1,4 @@
-use core_quantum_time_engine::macro_guard::{MacroGuard, MacroScaleBoundaryViolation};
+use aharonov::macro_guard::{MacroGuard, MacroScaleBoundaryViolation};
 
 #[test]
 fn test_macro_guard_legitimate_transition() {

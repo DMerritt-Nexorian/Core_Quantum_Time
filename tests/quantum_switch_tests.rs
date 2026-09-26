@@ -1,5 +1,5 @@
-use core_quantum_time_engine::quantum_switch::{Hamiltonian, JointState, build_quantum_switch};
-use core_quantum_time_engine::weak_measurement::QubitState;
+use aharonov::quantum_switch::{Hamiltonian, JointState, build_quantum_switch};
+use aharonov::weak_measurement::QubitState;
 use num_complex::Complex64;
 
 #[test]
